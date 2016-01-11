@@ -1,0 +1,17 @@
+<%= title_banner %>
+
+<% if @dashboards.empty? %>
+  <%= jumbotron do %>
+    <h1><%= t('.greeting') %></h1>
+    <p><%= t('.no_dashboard_guide') %></p>
+    <%= link_to t('.create_first_dashboard'), new_dashboard_path, class:'btn btn-primary btn-lg', role:'button' %>
+  <% end %>
+<% else %>
+  <%= link_panel(:info, title: t('.dashboard_list')) do %>
+    <div class="panel-body"><%= t('.dashboard_list_summary') %></div>
+    <% @dashboards.each do |board| %>
+      <%= link_to board.name, board, class: "list-group-item #{board.password_protected? ? 'list-group-item-warning' : '' }" %>
+    <% end %>
+  <% end %>
+<% end %>
+

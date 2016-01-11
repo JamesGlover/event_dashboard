@@ -1,0 +1,23 @@
+<div>
+<%= title_banner(@dashboard.name) %>
+
+<% @dashboard.product_lines.each do |product_line| %>
+  <table class="product-line table">
+    <caption><%= product_line.name %></caption>
+    <thead>
+      <th class="stage has-popover" data-container="body" data-placement="top" data-toggle="popover" title="event_title" data-content="event description">Library Start</th>
+      <th class="stage has-popover" data-container="body" data-placement="top" data-toggle="popover" title="event_title" data-content="event description">Tagging</th>
+      <th class="stage has-popover" data-container="body" data-placement="top" data-toggle="popover" title="event_title" data-content="event description">Something Else</th>
+      <th class="stage has-popover" data-container="body" data-placement="top" data-toggle="popover" title="event_title" data-content="event description">Final Bit before Complete</th>
+      <th class="stage has-popover" data-container="body" data-placement="top" data-toggle="popover" title="event_title" data-content="event description">Complete!</th>
+    </thead>
+    <tbody>
+      <td><ul class="plate-list list-group"><%= render_plate() %><%= render_plate() %></ul></td>
+      <td><ul class="plate-list list-group"></ul></td>
+      <td><ul class="plate-list list-group"></ul></td>
+      <td><ul class="plate-list list-group"><%= render_plate() %></ul></td>
+      <td><ul class="plate-list list-group"></ul></td>
+    </tbody>
+  </table>
+<% end %>
+</div>

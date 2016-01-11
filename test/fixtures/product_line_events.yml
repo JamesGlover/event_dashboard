@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  product_line_id: 1
+  event_id: 1
+  order: 1
+  tat_time: 1
+
+two:
+  product_line_id: 1
+  event_id: 1
+  order: 1
+  tat_time: 1
