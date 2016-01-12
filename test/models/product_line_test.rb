@@ -51,19 +51,28 @@ class ProductLineTest < ActiveSupport::TestCase
     ple_2 = create :product_line_event_type_mid,   product_line: pl
     ple_3 = create :product_line_event_type_end,   product_line: pl
 
-    not_started_plate = create :plate
-    just_started_plate = create :plate
-    in_progress_plate = create :plate
-    completed_plate = create :plate
+    pst = create :plate_subject_type
 
-    create :event, subject: just_started_plate, event_type: ple_1.event_type
+    not_started_plate = create :plate, subject_type: pst
+    just_started_plate = create :plate, subject_type: pst
+    in_progress_plate = create :plate, subject_type: pst
+    completed_plate = create :plate, subject_type: pst
 
-    create :event, subject: in_progress_plate, event_type: ple_1.event_type
-    create :event, subject: in_progress_plate, event_type: ple_2.event_type
+    source_plate = create :role_type, key: 'source_plate'
 
-    create :event, subject: completed_plate, event_type: ple_1.event_type
-    create :event, subject: completed_plate, event_type: ple_2.event_type
-    create :event, subject: completed_plate, event_type: ple_3.event_type
+    create :plate_event, subject: just_started_plate, event_type: ple_1.event_type, role_type: source_plate
+
+    create :plate_event, subject: in_progress_plate, event_type: ple_1.event_type, role_type: source_plate
+    create :plate_event, subject: in_progress_plate, event_type: ple_2.event_type, role_type: source_plate
+
+    create :plate_event, subject: completed_plate, event_type: ple_1.event_type, role_type: source_plate
+    create :plate_event, subject: completed_plate, event_type: ple_2.event_type, role_type: source_plate
+    create :plate_event, subject: completed_plate, event_type: ple_3.event_type, role_type: source_plate
+
+    report = pl.report
+
+    # This is actually a bit integrationy. Enable once we've got the basics working.
+    # assert_equal [[ple_1,[just_started_plate]],[ple_2,[in_progress_plate]],[ple_3,[]]], report
   end
 
 end

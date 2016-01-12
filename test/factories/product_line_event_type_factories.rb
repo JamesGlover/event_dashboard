@@ -8,7 +8,7 @@ FactoryGirl.define do
   factory :product_line_event_type do
     product_line
     order
-    tat_time 1
+    turn_around_time 1
     event_type
 
     factory :product_line_event_type_start do
@@ -18,13 +18,13 @@ FactoryGirl.define do
 
     factory :product_line_event_type_mid do
       order 1
-      tat_time 3
+      turn_around_time 3
       association :event_type, factory: :event_type, key: "mid_event", description: "The middle of the process"
     end
 
     factory :product_line_event_type_end do
       order 2
-      tat_time 0
+      turn_around_time 0
       association :event_type, factory: :event_type, key: "end_event", description: "The end of the process"
     end
 
