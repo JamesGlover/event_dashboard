@@ -12,12 +12,14 @@ table.product-line {
       vertical-align: bottom; padding: 10px 10px 0 10px;
     }
 
-    // th:nth-child(odd), td:nth-child(odd) {
-    //   background: #BBB;
-    // }
-    th:nth-child(even), td:nth-child(even) {
-      background: #EEE;
+    th:nth-child(odd), td:nth-child(odd) {
+      background: $table-bg-accent;
     }
+    th:last-child, td:last-child {
+      color: $brand-success;
+      background: $state-success-bg;
+    }
+
 
     ul.plate-list {
       margin: 0;
@@ -32,3 +34,4 @@ table.product-line {
     }
   }
 }
+

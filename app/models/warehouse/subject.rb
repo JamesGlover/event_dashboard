@@ -51,7 +51,7 @@ class Warehouse::Subject < WarehouseRecord
   }
 
   def history
-    PlateHistory.new(events)
+    PlateHistory.new(roles.sort_by(&:occured_at).reverse)
   end
 
 end

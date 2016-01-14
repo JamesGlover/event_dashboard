@@ -17,15 +17,5 @@
   </tbody>
 </table>
 <% else %>
-  <div class="alert alert-danger" role="alert">
-  <h2><%= t('.alert_title') %></h2>
-  <p><%= t('.alert_summary',name:product_line.name ) %>
-  <ul>
-  <% product_line.errors.full_messages.each do |message| %>
-    <li><%= message %></li>
-  <% end %>
-  </ul>
-  <%= link_to t('.alert_button'), edit_dashboard_path(product_line.dashboard), class:'btn btn-danger btn-sm', role:'button' %>
-  <p>
-  </div>
+  <%= render partial: 'product_lines/invalid_product_line', locals: { product_line: product_line } %>
 <% end %>

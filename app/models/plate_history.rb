@@ -3,7 +3,7 @@ class PlateHistory
   attr_reader :roles
 
   def initialize(*roles)
-    @roles = roles
+    @roles = roles.flatten
   end
 
   def latest(event_type,filters={})
@@ -27,6 +27,11 @@ class PlateHistory
     }
     latest(event_type,filters)&.occured_at||nil
   end
+
+  def days_in(product_line_event_type)
+    (Time.now - entered_stage(product_line_event_type)) / 1.day
+  end
+
 
   private
 

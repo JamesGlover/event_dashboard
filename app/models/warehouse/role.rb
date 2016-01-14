@@ -6,6 +6,8 @@ class Warehouse::Role < WarehouseRecord
   has_one :event_type, :through => :event
   belongs_to :subject
 
+  delegate :occured_at, to: :event
+
   def order_type
     metadata.with_key('order_type').first.value
   end

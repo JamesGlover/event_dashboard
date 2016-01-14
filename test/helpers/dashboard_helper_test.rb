@@ -25,14 +25,19 @@ class DashboardHelperTest < ActiveSupport::TestCase
     end
 
     def age
-      ((Time.now - 3.days.ago)/1.day).round(2)
+      raw_age.round(2)
+    end
+
+    def raw_age
+      (Time.now - created_at)/1.day
     end
 
     def should_be(style)
       plate_created = created_at
       plate_tat = tat
+      plate_age = raw_age
       suite.test "A plate made #{age} days ago, with a tat of #{tat} days should be #{style}" do
-        assert_equal style, status_colour(plate_created, plate_tat)
+        assert_equal style, status_colour(plate_age, plate_tat)
       end
     end
 

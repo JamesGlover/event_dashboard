@@ -14,4 +14,8 @@ class ProductLineEventType < ActiveRecord::Base
   def first_stage
     product_line.product_line_event_types.first
   end
+
+  def last?
+    self == product_line.product_line_event_types.last
+  end
 end

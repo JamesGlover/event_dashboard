@@ -36,12 +36,18 @@ en:
       create_first_dashboard: "Create your first dashboard."
       dashboard_list: "Available dashboards"
       dashboard_list_summary: "Select a dashboard from the list below."
+    show:
+      greeting: 'This looks a bit empty...'
+      no_product_lines_guide: "This dashboard doesn't have any product lines configured yet."
+      add_new_product_lines: "Add a product line"
   shared:
     comming_soon:
       title: "Comming Soon..."
       message: "Sorry, we haven't quite finished up here yet."
   product_lines:
     product_line:
+      complete: "✓"
+    invalid_product_line:
       alert_title: "Oh dear..."
       alert_summary: "There were some issues with the %{name} pipeline configuration and we can't show the report."
       alert_button: "Fix it"
@@ -50,5 +56,10 @@ en:
       models:
         product_line:
           attributes:
+            subject_type:
+              blank: "needs to be set; it might be that the previous subject type has been removed."
+            role_type:
+              blank: "needs to be set; it might be that the previous role type has been removed."
             product_line_event_types:
               too_short: "needs to be at least two events"
+

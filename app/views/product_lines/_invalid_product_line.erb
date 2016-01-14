@@ -1,0 +1,16 @@
+<div class="alert alert-danger" role="alert">
+  <h2><%= t('.alert_title') %></h2>
+  <div class="row">
+    <div class="col-xs-12 col-md-8">
+      <p><%= t('.alert_summary',name:product_line.name ) %></p>
+      <ul>
+      <% product_line.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+    <div class="col-xs-12 col-md-4">
+      <%= link_to t('.alert_button'), edit_dashboard_path(product_line.dashboard), class:'btn btn-danger btn-lg btn-block', role:'button' %>
+    </div>
+  </div>
+</div>
