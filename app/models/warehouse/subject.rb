@@ -1,59 +1,57 @@
 # frozen_string_literal: true
+require 'pry'
+require './lib/model_helpers/table_helpers'
+
 class Warehouse::Subject < WarehouseRecord
+
+  # Add some helper methods to make performing more complicated arel tidier
+  extend ModelHelpers::TableHelpers
+
   belongs_to :subject_type
   has_many :roles
-  has_many :events, through: :roles
+  has_many :events, ->() { order(:occured_at) }, through: :roles
 
-  scope :of_type, ->(type) { joins(:subject_type).where(subject_types:{key:type}) }
+  scope :of_type, ->(type) { where(subject_type_id: type.id) }
 
-  # SELECT subjects.friendly_name, MIN(library_start.occured_at) AS started, MAX(library_complete.occured_at) FROM subjects
-  # LEFT JOIN subject_types ON subject_types.id = subjects.subject_type_id
-  # LEFT OUTER JOIN roles ON roles.subject_id = subjects.id
-  # LEFT OUTER JOIN events AS library_start ON library_start.event_type_id = 1 AND roles.event_id = library_start.id
-  # LEFT OUTER JOIN events AS library_complete ON library_complete.event_type_id = 2 AND roles.event_id = library_complete.id
-  # WHERE subject_types.key = 'submission'
-  # GROUP BY subjects.id;
-# 'events AS start_event ON start_event.event_type_id = ? AND roles.event_id = start_event.id'
-  scope :with_role_in, ->(role_key,event_type) {
-    start_event = Arel::Table.new(:events).alias('start_event')
-    roles_table = Arel::Table.new(:roles)
-    subjects_table = Arel::Table.new(:subjects)
-
-    role_join = subjects_table.outer_join(roles_table).on(roles_table[:subject_id].eq(subjects_table[:id]))
-
-    # We need to do an outer join, so build it up in arel
-    # first. Just using outer_join iteslf in the scope converts
-    # everything to an Arel::SelectManager, rather than a rails relation
-    oj = roles_table.outer_join(start_event).on(
-      start_event[:event_type_id].eq(event_type.id).and(
-        start_event[:id].eq(roles_table[:event_id])))
-
-    joins(role_join.join_sources).
-    joins(oj.join_sources).
-    group('subjects.id').
-    having(start_event[:occured_at].minimum.gt(0))
-
+  scope :with_roles, ->(role_type) {
+    # Note: If we use an includes here, rails will use the roles loaded here when eager loading events
+    # This causes issues as we are effectively squishing out all relevant events
+    role_join = subjects_table.outer_join(roles_table).on(
+      roles_table[:subject_id].eq(subjects_table[:id]).and(roles_table[:role_type_id].eq(role_type.id))
+    )
+    joins(role_join.join_sources)
   }
 
-  scope :without_role_in, ->(role_key,event_type) {
-    end_event = Arel::Table.new(:events).alias('end_event')
-    roles_table = Arel::Table.new(:roles)
-    subjects_table = Arel::Table.new(:subjects)
+  # TODO: Make it more like this. Current issue are rails getting too smart for its own good wrt. eager loading
+  # scope :with_roles, ->(role_type) {
+  #   includes(:roles).where(roles:{role_type_id:[nil,role_type.id].uniq})
+  # }
 
-    role_join = subjects_table.outer_join(roles_table).on(roles_table[:subject_id].eq(subjects_table[:id]))
-
-    # We need to do an outer join, so build it up in arel
-    # first. Just using outer_join iteslf in the scope converts
-    # everything to an Arel::SelectManager, rather than a rails relation
-    oj = roles_table.outer_join(end_event).on(
-      end_event[:event_type_id].eq(event_type.id).and(
-        end_event[:id].eq(roles_table[:event_id])))
-
-    joins(role_join.join_sources).
-    joins(oj.join_sources).
-    group('subjects.id').
-    having('MAX(end_event.occured_at) IS NULL')
-    # end_event[:occured_at].maximum.eq(nil)
+  scope :using_events, -> {
+    joins(roles_table.outer_join(events_table).on(events_table[:id].eq(roles_table[:event_id])).join_sources)
   }
+
+  scope :aggregate_events, -> {
+    using_events.
+    group('subjects.id')
+  }
+
+  scope :with_event_type, ->(event_type) {
+    aggregate_events.having(['BIT_OR(events.event_type_id = ?)', event_type.id])
+  }
+
+  scope :without_event_type, ->(event_type) {
+    aggregate_events.having(['NOT BIT_OR(events.event_type_id = ?)', event_type.id])
+  }
+
+  scope :with_order_type, ->(order_type_value) {
+    metadata_table = Warehouse::Metadatum.arel_table
+    joins(events_table.join(metadata_table).on(metadata_table[:event_id].eq(events_table[:id])).join_sources).
+    where(metadata_table[:key].eq('order_type').and(metadata_table[:value].eq(order_type_value)))
+  }
+
+  def history
+    PlateHistory.new(events)
+  end
 
 end

@@ -19,15 +19,16 @@ class ProductLineTest < ActiveSupport::TestCase
     assert_kind_of Dashboard, pl.dashboard
   end
 
-  test "should have no product_line event types by default" do
-    pl = build :product_line
-    assert_empty pl.product_line_event_types
-  end
-
   test "should list product_line_event_types in order" do
-    pl = create :product_line
-    ple_1 = create :product_line_event_type, order: 1, product_line: pl
-    ple_2 = create :product_line_event_type, order: 0, product_line: pl
+    pl = build :product_line_without_events
+    ple_1 = build :product_line_event_type, order: 1, product_line: pl
+    ple_2 = build :product_line_event_type, order: 0, product_line: pl
+
+    pl.product_line_event_types << ple_1 << ple_2
+
+    pl.save
+    pl.reload
+
     assert_includes pl.product_line_event_types, ple_1
     assert_includes pl.product_line_event_types, ple_2
     assert_equal ple_2, pl.product_line_event_types.first
@@ -36,8 +37,6 @@ class ProductLineTest < ActiveSupport::TestCase
 
   test "should destroy associated product_line_event_types on destruction" do
     pl = create :product_line
-    ple_1 = create :product_line_event_type, order: 1, product_line: pl
-    ple_2 = create :product_line_event_type, order: 0, product_line: pl
     assert_equal 1, ProductLine.count
     assert_equal 2, ProductLineEventType.count
     pl.destroy
@@ -46,33 +45,40 @@ class ProductLineTest < ActiveSupport::TestCase
   end
 
   test "report should yield an ordered array of event type and associated plates" do
-    pl = create :product_line
-    ple_1 = create :product_line_event_type_start, product_line: pl
-    ple_2 = create :product_line_event_type_mid,   product_line: pl
-    ple_3 = create :product_line_event_type_end,   product_line: pl
+    source_plate = create :role_type, key: 'library_source_labware'
 
-    pst = create :plate_subject_type
+    pl = build :product_line_without_events, role_type: source_plate
+    pst = pl.subject_type
 
-    not_started_plate = create :plate, subject_type: pst
+    ple_1 = build :product_line_event_type_start, product_line: pl
+    ple_2 = build :product_line_event_type_mid,   product_line: pl
+    ple_3 = build :product_line_event_type_end,   product_line: pl
+
+    pl.product_line_event_types << ple_1 << ple_2 << ple_3
+    pl.save!
+
+    not_started_plate  = create :plate, subject_type: pst
     just_started_plate = create :plate, subject_type: pst
-    in_progress_plate = create :plate, subject_type: pst
-    completed_plate = create :plate, subject_type: pst
+    in_progress_plate  = create :plate, subject_type: pst
+    completed_plate    = create :plate, subject_type: pst
 
-    source_plate = create :role_type, key: 'source_plate'
 
-    create :plate_event, subject: just_started_plate, event_type: ple_1.event_type, role_type: source_plate
+    create :plate_event, subject: just_started_plate, event_type: ple_1.event_type, role_type: source_plate, order_type: pl.name
 
-    create :plate_event, subject: in_progress_plate, event_type: ple_1.event_type, role_type: source_plate
-    create :plate_event, subject: in_progress_plate, event_type: ple_2.event_type, role_type: source_plate
+    create :plate_event, subject: in_progress_plate, event_type: ple_1.event_type, role_type: source_plate, order_type: pl.name
+    create :plate_event, subject: in_progress_plate, event_type: ple_2.event_type, role_type: source_plate, order_type: pl.name
 
-    create :plate_event, subject: completed_plate, event_type: ple_1.event_type, role_type: source_plate
-    create :plate_event, subject: completed_plate, event_type: ple_2.event_type, role_type: source_plate
-    create :plate_event, subject: completed_plate, event_type: ple_3.event_type, role_type: source_plate
+    create :plate_event, subject: completed_plate, event_type: ple_1.event_type, role_type: source_plate, order_type: pl.name
+    create :plate_event, subject: completed_plate, event_type: ple_2.event_type, role_type: source_plate, order_type: pl.name
+    create :plate_event, subject: completed_plate, event_type: ple_3.event_type, role_type: source_plate, order_type: pl.name
 
     report = pl.report
 
-    # This is actually a bit integrationy. Enable once we've got the basics working.
-    # assert_equal [[ple_1,[just_started_plate]],[ple_2,[in_progress_plate]],[ple_3,[]]], report
+    assert_equal [
+      [ple_1,[just_started_plate]],
+      [ple_2,[in_progress_plate]],
+      [ple_3,[]]
+    ], report
   end
 
 end

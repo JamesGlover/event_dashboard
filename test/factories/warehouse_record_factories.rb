@@ -29,10 +29,12 @@ FactoryGirl.define do
       transient do
         subject ''
         role_type ''
+        order_type 'example'
       end
 
-      after(:create) do |event,eveluator|
-        create :role, subject: eveluator.subject, event: event, role_type: eveluator.role_type
+      after(:create) do |event,evaluator|
+        create :role, subject: evaluator.subject, event: event, role_type: evaluator.role_type
+        create :order_type_metadata, value: evaluator.order_type, event: event
       end
     end
   end
@@ -49,6 +51,15 @@ FactoryGirl.define do
   factory :event_type, class: Warehouse::EventType do
     key
     description "Straight from our event factory!"
+  end
+
+  factory :metadata, class: Warehouse::Metadatum do
+    key 'key'
+    value 'value'
+    factory :order_type_metadata do
+      key 'order_type'
+      value 'value'
+    end
   end
 
   factory :subject, class: Warehouse::Subject do

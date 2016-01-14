@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160111150415) do
+ActiveRecord::Schema.define(version: 20160114100741) do
 
   create_table "dashboards", force: :cascade do |t|
     t.string   "key",             limit: 20,  null: false
@@ -35,10 +35,12 @@ ActiveRecord::Schema.define(version: 20160111150415) do
   add_index "product_line_event_types", ["product_line_id"], name: "index_product_line_event_types_on_product_line_id", using: :btree
 
   create_table "product_lines", force: :cascade do |t|
-    t.string   "name",         limit: 255, null: false
-    t.integer  "dashboard_id", limit: 4,   null: false
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
+    t.string   "name",            limit: 255, null: false
+    t.integer  "dashboard_id",    limit: 4,   null: false
+    t.integer  "role_type_id",    limit: 4,   null: false
+    t.integer  "subject_type_id", limit: 4,   null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   add_index "product_lines", ["dashboard_id"], name: "index_product_lines_on_dashboard_id", using: :btree

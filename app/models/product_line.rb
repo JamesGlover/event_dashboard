@@ -2,14 +2,45 @@
 class ProductLine < ActiveRecord::Base
 
   belongs_to :dashboard, required: true, inverse_of: :product_lines
+  belongs_to :subject_type, required: true, class_name: 'Warehouse::SubjectType'
+  belongs_to :role_type, required: true, class_name: 'Warehouse::RoleType'
+
   has_many :product_line_event_types, -> { order(:order) }, inverse_of: :product_line, dependent: :destroy
 
   validates_presence_of :name
+  validates :product_line_event_types, length: { minimum: 2 }
 
   def report
-    event_type_subjects = {}
+    # If we're not valid, don't try and render a report, you'll only hurt yourself
+    return [] unless valid?
+    event_type_subjects = Hash.new {|h,i| h[i] = Array.new }
 
-    product_line_event_types.map {|plet| [plet,[event_type_subjects[plet.event_type]]]}
+    subject_and_events.each do |subject|
+      most_recent_tracked_event = subject.events.reverse.detect {|event| product_line_event_types.map(&:event_type_id).include?(event.event_type_id)}
+      event_type_subjects[most_recent_tracked_event.event_type] << subject
+    end
+
+    product_line_event_types.map {|plet| [plet,event_type_subjects[plet.event_type]]}
+  end
+
+  def order_type; name; end
+
+  def initial_event_type
+    product_line_event_types.first.event_type
+  end
+
+  def final_event_type
+    product_line_event_types.last.event_type
+  end
+
+  def subject_and_events
+    Warehouse::Subject.
+      of_type(subject_type).
+      with_roles(role_type).
+      with_event_type(initial_event_type).
+      without_event_type(final_event_type).
+      with_order_type(order_type).
+      preload(events: :event_type)
   end
 
 end

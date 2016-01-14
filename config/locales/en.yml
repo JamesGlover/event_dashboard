@@ -40,3 +40,15 @@ en:
     comming_soon:
       title: "Comming Soon..."
       message: "Sorry, we haven't quite finished up here yet."
+  product_lines:
+    product_line:
+      alert_title: "Oh dear..."
+      alert_summary: "There were some issues with the %{name} pipeline configuration and we can't show the report."
+      alert_button: "Fix it"
+  activerecord:
+    errors:
+      models:
+        product_line:
+          attributes:
+            product_line_event_types:
+              too_short: "needs to be at least two events"

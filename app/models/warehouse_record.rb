@@ -4,7 +4,7 @@
 require 'activeuuid'
 
 class WarehouseRecord < ActiveRecord::Base
-  establish_connection configurations['event_warehouse'][Rails.env]
+  establish_connection ENV["event_warehouse_db_#{Rails.env}"]||configurations['event_warehouse'][Rails.env]
   ActiveUUID::Patches.apply!
 
   self.abstract_class = true
