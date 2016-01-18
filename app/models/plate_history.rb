@@ -31,10 +31,7 @@ class PlateHistory
 
   def entered_stage(product_line_event_type)
     event_type = product_line_event_type.event_type
-    filters = {
-      :order_type => product_line_event_type.order_type,
-      :role_type => product_line_event_type.role_type
-    }
+    filters = product_line_event_type.filters
     latest(event_type,filters)&.occured_at||nil
   end
 

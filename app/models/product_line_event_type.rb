@@ -18,4 +18,11 @@ class ProductLineEventType < ActiveRecord::Base
   def last?
     self == product_line.product_line_event_types.last
   end
+
+  def filters
+    {
+      :order_type => order_type,
+      :role_type => role_type
+    }
+  end
 end

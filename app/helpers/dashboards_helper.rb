@@ -27,7 +27,8 @@ module DashboardsHelper
         content: content,
         toggle: "popover",
         placement: "top",
-        container: "body"
+        container: "body",
+        html: true
       }
     }
   end
@@ -38,7 +39,14 @@ module DashboardsHelper
     style_colour = status_colour(plate.history.days_in(stage),stage.turn_around_time)
     {
       class:"plate list-group-item list-group-item-#{style_colour} has-popover"
-    }.merge(popover_options(plate.friendly_name,'Event history'))
+    }.merge(popover_options(plate.friendly_name,plate_history(plate,stage)))
+  end
+
+  def plate_history(plate,stage)
+    content_tag(:ld,plate.history.matching(stage.filters).map do |event|
+      content_tag(:dd,event.event_type.key.humanize) <<
+      content_tag(:dt,event.occured_at)
+    end.flatten.join(''))
   end
 
 end

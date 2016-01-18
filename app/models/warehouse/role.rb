@@ -10,6 +10,6 @@ class Warehouse::Role < WarehouseRecord
   has_one :order_type_data, ->() { with_key('order_type') }, :class_name => 'Warehouse::Metadatum', :through => :event
 
   def order_type
-    order_type_data.value
+    order_type_data.try(:value)
   end
 end

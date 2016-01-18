@@ -16,9 +16,10 @@ class ProductLine < ActiveRecord::Base
     event_type_subjects = Hash.new {|h,i| h[i] = Array.new }
 
     relevant_events = product_line_event_types.map(&:event_type_id)
+    filters = {}
 
     subject_and_events.each do |subject|
-      most_recent_tracked_event = subject.history.latest_in(relevant_events,filters={})
+      most_recent_tracked_event = subject.history.latest_in(relevant_events,filters)
       event_type_subjects[most_recent_tracked_event.event_type] << subject
     end
 
