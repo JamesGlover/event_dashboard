@@ -81,4 +81,30 @@ class ProductLineTest < ActiveSupport::TestCase
     ], report
   end
 
+  test 'should be serializable' do
+    rt = build :role_type, key: 'role_example'
+    pl = build :product_line_without_events, name: 'Example', role_type: rt
+    plet1 = build :product_line_event_type_start, product_line: pl
+    plet2 = build :product_line_event_type_mid,   product_line: pl
+    plet3 = build :product_line_event_type_end,   product_line: pl
+
+    pl.product_line_event_types << plet1 << plet2 << plet3
+
+    serialized = pl.serialize
+    expected={
+      'product_line' => {
+        'name' => 'Example',
+        'role_type_key'=>'role_example',
+        'subject_type_key'=>'plate',
+        'product_line_event_types'=>[
+          {'key'=>'start_event','turn_around_time' => 1 },
+          {'key'=>'mid_event',  'turn_around_time' => 3 },
+          {'key'=>'end_event',  'turn_around_time' => 0 }
+        ]
+      }
+    }
+    assert_equal expected, serialized
+
+  end
+
 end

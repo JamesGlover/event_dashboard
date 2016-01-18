@@ -8,11 +8,12 @@ module DashboardsHelper
       step_age = plate.history.days_in(stage)
       plate_age = plate.history.days_in(stage.first_stage)
       content_tag(:span,plate.friendly_name,class:'barcode') <<
-      content_tag(:span,"#{step_age.floor}/#{plate_age.floor}",class:'badge ')
+      content_tag(:span,"#{step_age ? step_age.floor : '?'}/#{plate_age ? plate_age.floor : '?'}",class:'badge ')
     end
   end
 
   def status_colour(entered_stage,tat_target)
+    return STATUS_CHANGES[1] if entered_stage.nil?
     return STATUS_CHANGES[3] if tat_target < entered_stage
     return STATUS_CHANGES[2] if (tat_target - entered_stage) < 1
     return STATUS_CHANGES[0] if entered_stage < 1

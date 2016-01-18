@@ -29,12 +29,12 @@ class DashboardTest < ActiveSupport::TestCase
   end
 
   test 'should report false for password_protected? is password unset' do
-    db = build :dashboard, password: nil
+    db = build :dashboard
     assert_not db.password_protected?
   end
 
   test 'should report true for password_protected? is password set' do
-    db = build :dashboard
+    db = build :protected_dashboard
     assert db.password_protected?
   end
 

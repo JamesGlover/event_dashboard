@@ -13,3 +13,5 @@
 @import 'bootstrap_base';
 @import 'dashboards';
 @import 'lines';
+
+.password-protected::after { content: ' [🔒 password protected]'; font-size:xx-small };

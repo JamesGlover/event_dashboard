@@ -4,7 +4,11 @@ FactoryGirl.define do
   factory :dashboard do
     name 'Example Dashboard'
     key 'example_dashboard'
-    password 'secret_password'
+    password nil
+
+    factory :protected_dashboard do
+      password 'secret_password'
+    end
   end
 
 end

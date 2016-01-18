@@ -8,10 +8,10 @@ class Warehouse::Subject < WarehouseRecord
   extend ModelHelpers::TableHelpers
 
   belongs_to :subject_type
-  has_many :roles
-  has_many :events, ->() { order(:occured_at) }, through: :roles
+  has_many :roles, inverse_of: :subject
+  has_many :events, ->() { order(:occured_at) }, through: :roles, inverse_of: :subjects
 
-  scope :of_type, ->(type) { where(subject_type_id: type.id) }
+  scope :of_type, ->(type) { where(subject_type_id: type) }
 
   scope :with_roles, ->(role_type) {
     # Note: If we use an includes here, rails will use the roles loaded here when eager loading events
@@ -21,6 +21,8 @@ class Warehouse::Subject < WarehouseRecord
     )
     joins(role_join.join_sources)
   }
+
+  scope :with_preloads, -> { preload(roles: [{event: [:event_type]}, :role_type, :event_type, :order_type_data ]) }
 
   # TODO: Make it more like this. Current issue are rails getting too smart for its own good wrt. eager loading
   # scope :with_roles, ->(role_type) {

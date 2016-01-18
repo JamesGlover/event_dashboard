@@ -90,4 +90,28 @@ class PlateHistoryTest < ActiveSupport::TestCase
 
   end
 
+  test 'can find the latest relevant event' do
+    plate = create :plate
+
+    et_1 = create :event_type
+    et_2 = create :event_type
+    source_plate = create :role_type, key: 'library_source_plate'
+    pl = create :product_line, name: 'type2', subject_type: plate.subject_type, role_type: source_plate
+
+    pet = create :product_line_event_type, event_type: et_1, product_line: pl
+    pet2 = create :product_line_event_type, event_type: et_2, product_line: pl
+
+    stock_plate = create :role_type
+
+    e1 = create :plate_event, subject: plate, event_type: et_1, role_type: source_plate, order_type: 'type2'
+    e2 = create :plate_event, subject: plate, event_type: et_1, role_type: stock_plate, order_type: 'type2'
+    e3 = create :plate_event, subject: plate, event_type: et_1, role_type: stock_plate, order_type: 'type1'
+    e4 = create :plate_event, subject: plate, event_type: et_2, role_type: stock_plate, order_type: 'type2'
+
+    plate_history = PlateHistory.new(e1.roles.first,e4.roles.first,e2.roles.first,e3.roles.first)
+
+    assert_equal e4, plate_history.latest_in([et_1.id,et_2.id])
+
+  end
+
 end

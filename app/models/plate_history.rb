@@ -12,6 +12,16 @@ class PlateHistory
     end&.event
   end
 
+  def latest_in(relevant_events,filters={})
+    matching(filters).reduce(nil) do |most_recent,event|
+      if relevant_events.include?(event.event_type_id)
+        most_recent.present? && most_recent > event ? most_recent : event
+      else
+        most_recent
+      end
+    end
+  end
+
   def matching(filters)
     roles.reduce([]) do |matching,role|
       matching << role.event if filter(role,filters)
@@ -29,7 +39,8 @@ class PlateHistory
   end
 
   def days_in(product_line_event_type)
-    (Time.now - entered_stage(product_line_event_type)) / 1.day
+    entered_stage = entered_stage(product_line_event_type)
+    entered_stage && (Time.now - entered_stage) / 1.day
   end
 
 

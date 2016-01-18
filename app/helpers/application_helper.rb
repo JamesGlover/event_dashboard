@@ -55,4 +55,18 @@ module ApplicationHelper
       out << content_tag(body_type,body_options,&block)
     end
   end
+
+  def bs_alert(style,message)
+    content_tag(:div, class:"alert alert-#{style}", role:"alert") do
+      content_tag(:strong,t(style,scope:['general','alert','title'])) << " " <<
+      content_tag(:span,message,class:"alert-message")
+    end
+  end
+
+  def render_flashes
+    flash.each do |status,message|
+      concat bs_alert(status,message)
+    end
+    nil
+  end
 end

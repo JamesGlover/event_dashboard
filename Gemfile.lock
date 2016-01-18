@@ -49,6 +49,9 @@ GEM
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
     builder (3.2.2)
+    bullet (5.0.0)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.9.0)
     coderay (1.1.0)
     coffee-rails (4.1.1)
       coffee-script (>= 2.2.0)
@@ -166,6 +169,7 @@ GEM
     uglifier (2.7.2)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    uniform_notifier (1.9.0)
     uuidtools (2.1.5)
 
 PLATFORMS
@@ -176,6 +180,7 @@ DEPENDENCIES
   activeuuid
   bcrypt (~> 3.1.7)
   bootstrap-sass
+  bullet
   coffee-rails (~> 4.1.0)
   factory_girl_rails
   jbuilder (~> 2.0)

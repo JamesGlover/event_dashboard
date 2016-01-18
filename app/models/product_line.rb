@@ -15,8 +15,10 @@ class ProductLine < ActiveRecord::Base
     return [] unless valid?
     event_type_subjects = Hash.new {|h,i| h[i] = Array.new }
 
+    relevant_events = product_line_event_types.map(&:event_type_id)
+
     subject_and_events.each do |subject|
-      most_recent_tracked_event = subject.events.reverse.detect {|event| product_line_event_types.map(&:event_type_id).include?(event.event_type_id)}
+      most_recent_tracked_event = subject.history.latest_in(relevant_events,filters={})
       event_type_subjects[most_recent_tracked_event.event_type] << subject
     end
 
@@ -35,12 +37,34 @@ class ProductLine < ActiveRecord::Base
 
   def subject_and_events
     Warehouse::Subject.
-      of_type(subject_type).
+      of_type(subject_type_id).
       with_roles(role_type).
       with_event_type(initial_event_type).
       without_event_type(final_event_type).
       with_order_type(order_type).
-      preload(events: :event_type)
+      with_preloads
+  end
+
+  def serialize
+    as_json(
+      root: true,
+      only: [:name],
+      methods: [ :role_type_key, :subject_type_key ],
+      include: {
+        product_line_event_types: {
+          only: :turn_around_time,
+          methods: :key
+        }
+      }
+    )
+  end
+
+  def role_type_key
+    role_type.key
+  end
+
+  def subject_type_key
+    subject_type.key
   end
 
 end

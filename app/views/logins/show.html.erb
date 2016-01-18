@@ -1,0 +1,7 @@
+<%= jumbotron do %>
+<h1><%= t('.greeting') %></h1>
+<p><%= t('.login_guide', name: @dashboard.name) %></p>
+<%= form_tag do %>
+  <%= password_field_tag :password, nil, class:"form-control" , placeholder:t('password_placeholder',scope: :general) %>
+<% end %>
+<% end %>

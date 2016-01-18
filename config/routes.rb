@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   resources :dashboards do
     resources :lines
+    resource :login, only: [:show,:create,:destroy]
   end
 
 end

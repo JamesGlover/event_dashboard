@@ -40,6 +40,30 @@ en:
       greeting: 'This looks a bit empty...'
       no_product_lines_guide: "This dashboard doesn't have any product lines configured yet."
       add_new_product_lines: "Add a product line"
+  logins:
+    show:
+      greeting: 'Login required...'
+      login_guide: '%{name} is password protected, type the password in below and hit return to gain access.'
+  general:
+    password_required: "That dashboard is password protected."
+    password_invalid: "The password you provided was incorrect."
+    logged_in: "You can now view this dashboard."
+    password_placeholder: "Password..."
+    alert:
+      title:
+        danger: "Sorry! "
+        warning: "Warning! "
+        info: "Note: "
+        success: "Great! "
+  errors:
+    dashboard_not_found:
+      greeting: "404"
+      missing_dashboard_guide: "We couldn't find the '%{name}' dashboard. It may have been deleted, or you might have made a typo."
+      list_suggestion: "Did you mean:"
+      no_matches: "Sorry, we couldn't find any similar dashboards."
+      index_link: "Not listed above? Check the full index."
+      index_link_no_suggestions: "Perhaps you can find what you are looking for here."
+      creation_suggestion: "Alternatively, if you build it, they will come."
   shared:
     comming_soon:
       title: "Comming Soon..."
@@ -49,7 +73,7 @@ en:
       complete: "✓"
     invalid_product_line:
       alert_title: "Oh dear..."
-      alert_summary: "There were some issues with the %{name} pipeline configuration and we can't show the report."
+      alert_summary: "There were some issues with the '%{name}' pipeline configuration and we can't show the report."
       alert_button: "Fix it"
   activerecord:
     errors:

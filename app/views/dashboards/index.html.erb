@@ -10,7 +10,7 @@
   <%= link_panel(:info, title: t('.dashboard_list')) do %>
     <div class="panel-body"><%= t('.dashboard_list_summary') %></div>
     <% @dashboards.each do |board| %>
-      <%= link_to board.name, board, class: "list-group-item #{board.password_protected? ? 'list-group-item-warning' : '' }" %>
+      <%= link_to board.name, board, class: "list-group-item #{board.password_protected? ? 'list-group-item-warning password-protected' : '' }" %>
     <% end %>
   <% end %>
 <% end %>
