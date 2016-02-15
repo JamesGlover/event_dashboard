@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require 'pry'
 require './lib/model_helpers/table_helpers'
 
 class Warehouse::Subject < WarehouseRecord
