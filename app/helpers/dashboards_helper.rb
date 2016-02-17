@@ -13,7 +13,7 @@ module DashboardsHelper
   end
 
   def status_colour(entered_stage,tat_target)
-    return STATUS_CHANGES[1] if entered_stage.nil?
+    return STATUS_CHANGES[1] if tat_target.nil? || entered_stage.nil?
     return STATUS_CHANGES[3] if tat_target < entered_stage
     return STATUS_CHANGES[2] if (tat_target - entered_stage) < 1
     return STATUS_CHANGES[0] if entered_stage < 1

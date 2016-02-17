@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require './lib/dictionary_suggest'
+
 class Dashboard < ActiveRecord::Base
 
   extend DictionarySuggest::Suggestable
