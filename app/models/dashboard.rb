@@ -10,6 +10,11 @@ class Dashboard < ActiveRecord::Base
   # Passwords are optional
   has_secure_password validations: false
 
+  # We import the default validations, minus the insistance on a password
+  validates_length_of :password, maximum: ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED
+  validates_confirmation_of :password, allow_blank: false
+
+
   has_many :product_lines, dependent: :destroy, inverse_of: :dashboard, autosave: true
 
   validates_presence_of :name, :key

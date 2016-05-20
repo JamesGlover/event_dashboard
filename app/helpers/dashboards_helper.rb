@@ -1,7 +1,6 @@
 module DashboardsHelper
 
-  STATUS_CHANGES = [ 'success', 'info', 'warning', 'danger' ]
-
+  STATUS_CHANGES = [ 'success', 'info', 'warning', 'danger']
 
   def render_plate(plate,stage)
     content_tag(:li,plate_options(plate,stage)) do
@@ -46,7 +45,7 @@ module DashboardsHelper
     content_tag(:ld,plate.history.matching(stage.filters).map do |event|
       content_tag(:dd,event.event_type.key.humanize) <<
       content_tag(:dt,event.occured_at)
-    end.flatten.join(''))
+    end.uniq.flatten.join(''))
   end
 
 end

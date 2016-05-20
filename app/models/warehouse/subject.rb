@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 require './lib/model_helpers/table_helpers'
-
+require 'pry'
 class Warehouse::Subject < WarehouseRecord
 
   # Add some helper methods to make performing more complicated arel tidier
   extend ModelHelpers::TableHelpers
 
-  belongs_to :subject_type
+  belongs_to :subject_type, inverse_of: :subjects
   has_many :roles, inverse_of: :subject
   has_many :events, ->() { order(:occured_at) }, through: :roles, inverse_of: :subjects
 
@@ -21,7 +21,16 @@ class Warehouse::Subject < WarehouseRecord
     joins(role_join.join_sources)
   }
 
-  scope :with_preloads, -> { preload(roles: [{event: [:event_type]}, :role_type, :event_type, :order_type_data ]) }
+  scope :with_preloads, -> {
+    preload(
+      roles: [
+        :event,
+        { event: :event_type},
+        :role_type,
+        :order_type_data
+      ]
+    )
+  }
 
   # TODO: Make it more like this. Current issue are rails getting too smart for its own good wrt. eager loading
   # scope :with_roles, ->(role_type) {
@@ -45,14 +54,18 @@ class Warehouse::Subject < WarehouseRecord
     aggregate_events.having(['NOT BIT_OR(events.event_type_id = ?)', event_type.id])
   }
 
-  scope :with_order_type, ->(order_type_value) {
+  scope :with_metadata, ->(metadata_key,metadata_value) {
     metadata_table = Warehouse::Metadatum.arel_table
     joins(events_table.join(metadata_table).on(metadata_table[:event_id].eq(events_table[:id])).join_sources).
-    where(metadata_table[:key].eq('order_type').and(metadata_table[:value].eq(order_type_value)))
+    where(metadata_table[:key].eq(metadata_key).and(metadata_table[:value].eq(metadata_value)))
+  }
+
+  scope :with_order_type, ->(order_type_value) {
+    with_metadata('order_type',order_type_value)
   }
 
   def history
-    PlateHistory.new(roles.sort_by(&:occured_at).reverse)
+    @history ||= PlateHistory.new(roles.sort_by(&:occured_at).reverse)
   end
 
 end

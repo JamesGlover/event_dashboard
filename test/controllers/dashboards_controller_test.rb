@@ -24,6 +24,34 @@ class DashboardsControllerTest < ActionController::TestCase
     assert_template :new
   end
 
+  test "should allow creation" do
+    db_count = Dashboard.count
+    post :create, :dashboard => { :name => 'Example' }
+    assert_equal 1, Dashboard.count - db_count
+    assert_redirected_to edit_dashboard_path(Dashboard.last)
+    assert_equal 'Example', Dashboard.last.name
+  end
+
+  test "should allow with a password" do
+    db_count = Dashboard.count
+    post :create, :dashboard => { :name => 'Example', :password=> 'hunter2', :password_confirmation => 'hunter2' }
+    assert_equal 1, Dashboard.count - db_count
+    assert_redirected_to edit_dashboard_path(Dashboard.last)
+    assert_includes session['approved_dashboards'], 'example'
+    assert_equal 'Example', Dashboard.last.name
+    assert Dashboard.last.authenticate('hunter2')
+  end
+
+
+  test "should reject non-matching passwords" do
+    db_count = Dashboard.count
+    post :create, :dashboard => { :name => 'Example', :password=> 'hunter2', :password_confirmation => 'swordfish' }
+    assert_equal 0, Dashboard.count - db_count
+    assert_redirected_to new_dashboard_path
+    assert_includes flash['danger'], "Password confirmation doesn't match Password"
+  end
+
+
   test "should show a dashboard" do
     db = create :dashboard
     get :show, :id => db.key

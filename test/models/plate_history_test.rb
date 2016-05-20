@@ -34,14 +34,14 @@ class PlateHistoryTest < ActiveSupport::TestCase
 
     plate_history = PlateHistory.new(e1.roles.first,e2.roles.first,e3.roles.first)
 
-    assert_equal e2, plate_history.latest(et_1,role_type:stock_plate)
-    assert_equal e1, plate_history.latest(et_1,role_type:source_plate)
-    assert_equal e3, plate_history.latest(et_1,order_type:'type1')
-    assert_equal e1, plate_history.latest(et_1,order_type:'type2')
-    assert_equal e3, plate_history.latest(et_1,role_type:stock_plate,order_type:'type1')
-    assert_equal e2, plate_history.latest(et_1,role_type:stock_plate,order_type:'type2')
-    assert_equal nil, plate_history.latest(et_1,role_type:source_plate,order_type:'type1')
-    assert_equal e1, plate_history.latest(et_1,role_type:source_plate,order_type:'type2')
+    assert_equal e2,  plate_history.latest(et_1, role_type:stock_plate)
+    assert_equal e1,  plate_history.latest(et_1, role_type:source_plate)
+    assert_equal e3,  plate_history.latest(et_1,                        order_type:'type1')
+    assert_equal e1,  plate_history.latest(et_1,                        order_type:'type2')
+    assert_equal e3,  plate_history.latest(et_1, role_type:stock_plate, order_type:'type1')
+    assert_equal e2,  plate_history.latest(et_1, role_type:stock_plate, order_type:'type2')
+    assert_equal nil, plate_history.latest(et_1, role_type:source_plate,order_type:'type1')
+    assert_equal e1,  plate_history.latest(et_1, role_type:source_plate,order_type:'type2')
   end
 
 

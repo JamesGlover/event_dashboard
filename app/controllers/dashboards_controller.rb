@@ -2,7 +2,7 @@ require './lib/dictionary_suggest'
 
 class DashboardsController < ApplicationController
 
-  before_action :confirm_permissions, except: [:index, :new]
+  before_action :confirm_permissions, except: [:index, :new, :create]
 
   def index
     @dashboards = Dashboard.all
@@ -18,6 +18,20 @@ class DashboardsController < ApplicationController
   end
 
   def update
+  end
+
+  def create
+    new_db = Dashboard.create(clean_params)
+    ActiveRecord::Base.transaction do
+      if new_db.save
+        # If we're password protected, log in immediately
+        (session['approved_dashboards'] ||= Set.new) << new_db.key if new_db.password_protected?
+        redirect_to edit_dashboard_path(new_db)
+      else
+        flash['danger'] = new_db.errors.full_messages
+        redirect_to new_dashboard_path
+      end
+    end
   end
 
   private
@@ -39,6 +53,10 @@ class DashboardsController < ApplicationController
     dictionary = DictionarySuggest.new(dashboards_list)
     @suggested_dashboards = dictionary.matches(params[:id])
     render 'errors/dashboard_not_found', status: :not_found
+  end
+
+   def clean_params
+    params.required(:dashboard).permit(:password,:name,:password_confirmation)
   end
 
 end

@@ -8,7 +8,7 @@ class PlateHistory
 
   def latest(event_type,filters={})
     roles.detect do |role|
-      role.event_type == event_type && filter(role,filters)
+      role.event.event_type == event_type && filter(role,filters)
     end&.event
   end
 

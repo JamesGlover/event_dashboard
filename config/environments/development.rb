@@ -43,4 +43,5 @@ Rails.application.configure do
     Bullet.alert = true
     Bullet.console = true
   end
+
 end

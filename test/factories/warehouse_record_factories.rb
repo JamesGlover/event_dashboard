@@ -32,9 +32,9 @@ FactoryGirl.define do
         order_type 'example'
       end
 
-      after(:create) do |event,evaluator|
-        create :role, subject: evaluator.subject, event: event, role_type: evaluator.role_type
-        create :order_type_metadata, value: evaluator.order_type, event: event
+      after(:build) do |event,evaluator|
+        event.metadata << build(:order_type_metadata, value: evaluator.order_type, event: event)
+        event.roles << build(:role, subject: evaluator.subject, event: event, role_type: evaluator.role_type)
       end
     end
   end
