@@ -24,4 +24,14 @@ class LoginsControllerTest < ActionController::TestCase
     assert_includes session['approved_dashboards'], 'dashboard_key'
     assert_equal 'You can now view this dashboard.', flash["success"]
   end
+
+  test "a delete with a dashboard id should log the user out" do
+    session['approved_dashboards'] = ['dashboard_key']
+    db = create :protected_dashboard, key: 'dashboard_key'
+    delete :destroy, :dashboard_id => db.key
+    assert_redirected_to dashboards_path
+    assert_not_includes session['approved_dashboards'], 'dashboard_key'
+    assert_equal 'You have been logged out; you will need to input the dashboard password before you can see it again.', flash["success"]
+  end
+
 end

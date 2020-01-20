@@ -48,6 +48,7 @@ en:
     password_required: "That dashboard is password protected."
     password_invalid: "The password you provided was incorrect."
     logged_in: "You can now view this dashboard."
+    logged_out: "You have been logged out; you will need to input the dashboard password before you can see it again."
     password_placeholder: "Password..."
     alert:
       title:

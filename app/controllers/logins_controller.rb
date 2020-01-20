@@ -19,5 +19,8 @@ class LoginsController < ApplicationController
   end
 
   def destroy
+    session['approved_dashboards'].delete(params[:dashboard_id])
+    flash['success'] = t(:logged_out,scope: :general)
+    redirect_to dashboards_path
   end
 end
